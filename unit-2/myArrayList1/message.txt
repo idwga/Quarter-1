@@ -1,0 +1,150 @@
+//create your own version of the ArrayList by completing this class definition
+//look in ListInterface to see what methods you need to create
+
+public class MyArrayList<anyType> implements ListInterface<anyType> {
+   private Object[] list; // stores the actual elements
+   private int numElements; // used to keep track of the number of valid elements in the list
+
+   public MyArrayList() {
+      list = new Object[10]; // start with a buffer size of 10
+      numElements = 0;
+   }
+
+   private void doubleCapacity() // private because this is a helper method that need not be used outside of the
+                                 // class
+   {
+      // make list twice as big, i.e. given [A, B, C, null], results with [A, B, C,
+      // null, null, null, null, null]
+      // to be used if we add an element that would be over the capacity of list
+
+      // Create a new list that has double the capacity of the old list
+      Object[] newList = new Object[list.length * 2];
+
+      // Copy the elements from the old list to the new list
+      for (int i = 0; i < list.length; i++) {
+         newList[i] = list[i];
+      }
+
+      // Set the the list equal to the new list
+      list = newList;
+   }
+
+   private void cutCapacity() // private because this is a helper method that need not be used outside of the
+                              // class
+   {
+      // make list half as big, i.e. given [A, B, C, null, null, null, null, null],
+      // results with [A, B, C, null]
+      // to be used if after removing an element, we have less than 1/3 of the
+      // capacity of list being used
+
+      // Create a new list that has half the capacity of the old list
+      Object[] newList = new Object[list.length / 2];
+
+      // Copy the elements from the old list to the new list
+      for (int i = 0; i < newList.length; i++) {
+         newList[i] = list[i];
+      }
+
+      // Set the the list equal to the new list
+      list = newList;
+   }
+
+   @Override
+   public boolean add(anyType x) {
+      // If the list is at max capacity, double the capacity
+      if (numElements == list.length) {
+         doubleCapacity();
+      }
+
+      // Add element x to the next available space
+      list[numElements] = x;
+
+      // Increase number of elements in the list
+      numElements++;
+
+      return true;
+   }
+
+   @Override
+   public boolean add(int index, anyType x) {
+      // If the list is at max capacity, double the capacity
+      if (numElements == list.length) {
+         doubleCapacity();
+      }
+
+      // Shift all elements after index to the right to make room for element x
+      for (int i = numElements; i > index; i--) {
+         list[i] = list[i - 1];
+      }
+
+      // Add element x at the specified index
+      list[index] = x;
+
+      // Increase number of elements in the list
+      numElements++;
+
+      return true;
+   }
+
+   @Override
+   public int size() {
+      // Return the number of elements in the inner list
+      return numElements;
+   }
+
+   @Override
+   @SuppressWarnings("unchecked")
+   public anyType set(int index, anyType x) {
+      // Store the element at index in a temporary variable
+      anyType temp = (anyType) list[index];
+
+      // Set the element at the specified index to x
+      list[index] = x;
+
+      // Return the removed element
+      return temp;
+   }
+
+   @Override
+   @SuppressWarnings("unchecked")
+   public anyType get(int index) {
+      // Return the element at the specified index
+      return (anyType) list[index];
+   }
+
+   @Override
+   @SuppressWarnings("unchecked")
+   public anyType remove(int index) {
+      // Store the element at index in a temporary variable
+      anyType temp = (anyType) list[index];
+
+      // Shift all elements after index to the left to remove the empty space
+      for (int i = index; i < numElements - 1; i++) {
+         list[i] = list[i + 1];
+      }
+
+      // Set the element at the specified index to x
+      numElements--;
+
+      // If the list is less than 1/3 full, half the capacity of the list
+      if (numElements < list.length / 3) {
+         cutCapacity();
+      }
+
+      // Return the removed element
+      return temp;
+   }
+
+   public String toString() {
+      String ans = "[";
+
+      for (int i = 0; i < numElements; i++) {
+
+         // Print each element of the list separated by a comma and a space unless it is
+         // the last element in the list
+         ans += (i != numElements - 1) ? list[i] + ", " : list[i];
+      }
+
+      return ans + "]";
+   }
+}
